@@ -1,0 +1,28 @@
+{
+  "name": "board",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/N0U/board.git"
+  },
+  "author": "banana_Ai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/N0U/board/issues"
+  },
+  "homepage": "https://github.com/N0U/board#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-engine-jsx": "^3.4.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "sequelize": "^6.16.2"
+  }
+}
