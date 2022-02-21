@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../dependencies.js');
 
-module.exports = sequelize.define('Post', {
+const Post = module.exports = sequelize.define('Post', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -11,10 +11,11 @@ module.exports = sequelize.define('Post', {
     type: DataTypes.STRING,
   },
   content: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING(2000),
   },
-  replayId: {
-    type: DataTypes.INTEGER,
-  }
+});
+
+Post.hasMany(Post, {
+  as: 'replies',
+  foreignKey: 'replyToId',
 });

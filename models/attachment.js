@@ -7,10 +7,6 @@ module.exports = sequelize.define('Attachment', {
     autoIncrement: true,
     primaryKey: true
   },
-  postId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
   fileId: {
     type: DataTypes.STRING,
     allowNull: false,

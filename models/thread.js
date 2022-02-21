@@ -1,11 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../dependencies.js');
 
-module.exports = sequelize.define('Thread', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true
-  },
+const Thread = module.exports = sequelize.define('Thread', {
   postCount: {
     type: DataTypes.INTEGER,
     allowNull: false,
