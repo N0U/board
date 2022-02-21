@@ -16,4 +16,4 @@ Post.hasMany(Attachment, {
   },
 });
 
-Promise.all([ Post.sync({ alter: true }), Thread.sync({ alter: true }), Attachment.sync({ alter: true }) ]);
+//Promise.all([ Post.sync({ alter: true }), Thread.sync({ alter: true }), Attachment.sync({ alter: true }) ]);

@@ -1,6 +1,10 @@
 require('dotenv').config();
+const express = require('express');
 const { app } = require('./dependencies.js');
 const engine = require('express-engine-jsx');
+
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true })) ;
 
 app.set('views', 'views');
 app.set('view engine', 'jsx');
