@@ -2,11 +2,9 @@ const Post = module.exports.post = require('./post.js');
 const Thread = module.exports.thread = require('./thread.js');
 const Attachment = module.exports.attachment = require('./attachment.js');
 
-Post.hasOne(Thread, {
-  foreignKey: {
-    name: 'id',
-    allowNull: false,
-  }
+Thread.hasMany(Post, {
+  foreignKey: 'threadId',
+  as: 'posts',
 });
 
 Post.hasMany(Attachment, {

@@ -13,9 +13,8 @@ const Post = module.exports = sequelize.define('Post', {
   content: {
     type: DataTypes.STRING(2000),
   },
-});
-
-Post.hasMany(Post, {
-  as: 'replies',
-  foreignKey: 'replyToId',
+  sage: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  }
 });
