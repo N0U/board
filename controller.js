@@ -5,14 +5,13 @@ const { app } = require('./dependencies.js');
 app.route('/')
   .get(async(req, res) => {
     const threadService = new ThreadService();
-
     const threads = await threadService.list();
     res.render('index', { threads });
   })
   .post(async (req, res) => {
     const body = req.body;
     const threadService = new ThreadService();
-    const thread = await threadService.create(body.title, body.content);
+    const thread = await threadService.create(body);
     res.redirect(`/${thread.id}`);
   });
 
@@ -43,6 +42,6 @@ app.route('/:threadId(\\d+)')
     }
   });
 
-app.get('*', function(req, res){
+app.all('*', function(req, res){
   res.status(404).render('404');
 });

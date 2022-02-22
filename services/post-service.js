@@ -1,7 +1,13 @@
+const { decorate } = require('./transaction-decorator.js');
 const { Op } = require("sequelize");
 const Post = require('../models/post.js');
 
 class PostService {
+  constructor() {
+    decorate(this, 'create');
+    decorate(this, 'reply');
+  }
+
   async reply(threadId, postData) {
     return await Post.create({
       title: postData.title,

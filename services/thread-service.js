@@ -1,8 +1,14 @@
+const { decorate } = require('./transaction-decorator.js');
 const Thread = require('../models/thread.js');
 const PostService = require('./post-service.js');
 const { EntityNotFoundError } = require('./errors.js');
 
 class ThreadService {
+  constructor() {
+    decorate(this, 'create');
+    decorate(this, 'reply');
+  }
+
   async create(postData) {
     const postService = new PostService();
     const post = await postService.create(postData);

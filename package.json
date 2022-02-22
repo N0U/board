@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/N0U/board#readme",
   "dependencies": {
+    "cls-hooked": "^4.2.2",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "express-engine-jsx": "^3.4.2",

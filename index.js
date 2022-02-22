@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const express = require('express');
 const { app } = require('./dependencies.js');
 const engine = require('express-engine-jsx');
