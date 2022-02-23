@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/N0U/board#readme",
   "dependencies": {
-    "@uploadcare/upload-client": "^2.2.0",
+    "axios": "^0.26.0",
     "cls-hooked": "^4.2.2",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",

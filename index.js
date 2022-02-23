@@ -17,3 +17,7 @@ require('./controller.js');
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Example app listening`)
 })
+
+process.on('uncaughtException', function (err) {
+    console.log(err);
+}); 
