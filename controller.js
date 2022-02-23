@@ -10,7 +10,6 @@ app.route('/')
   })
   .post(async (req, res) => {
     const body = req.body;
-    console.log(body);
     const { title, content, attachments } = body;
     const boardService = new BoardService();
     const thread = await boardService.createThread(title, content, attachments);
@@ -37,7 +36,6 @@ app.route('/:threadId(\\d+)')
     try {
       const { threadId } = req.params;
       const body = req.body;
-      console.log(body);
       const { title, content, sage, attachments } = body;
       const boardService = new BoardService();
       await boardService.replyThread(threadId, title, content, sage, attachments);
