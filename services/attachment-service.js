@@ -4,6 +4,7 @@ const Attachment = require('../models/attachment.js');
 
 const PUBLIC_KEY = process.env.UPLOADCARE_PUBLIC_KEY;
 const UPLOADCARE_TIMEOUT = 0;
+const PREVIEW_SIZE = '200x200';
 
 const publicApi = axios.create({
   baseURL: 'https://upload.uploadcare.com',
@@ -24,14 +25,14 @@ async function getGroupInfo(uuid) {
   const resp = await publicApi.get('/group/info', {
     params: {
       pub_key: PUBLIC_KEY,
-      group_id: groupUuid,
+      group_id: uuid,
     },
   });
   return resp.data;
 }
 
 async function storeGroup(uuid) {
-    await privateApi.put(`groups/${groupUuid}/storage/`);
+    await privateApi.put(`groups/${uuid}/storage/`);
 }
 
 class AttachmentService {
@@ -52,10 +53,10 @@ class AttachmentService {
         attachments.push(await post.createAttachment({
           fileId: uuid,
           fullUrl: `https://ucarecdn.com/${uuid}/`,
-          thumbnailUrl: `https://ucarecdn.com/${uuid}/-/preview/300x300/`,
+          thumbnailUrl: `https://ucarecdn.com/${uuid}/-/preview/${PREVIEW_SIZE}/`,
         }));
       }
-      await storeGroup();
+      await storeGroup(groupUuid);
       return attachments;
     } catch(error) {
       console.log(error);

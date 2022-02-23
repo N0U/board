@@ -6,7 +6,5 @@ const Thread = require('./components/thread');
 module.exports = function(props) {
   return <Layout>
     <Thread thread={props.thread} />
-    <hr />
-    <Form />
   </Layout>;
 }

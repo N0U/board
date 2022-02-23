@@ -48,7 +48,8 @@ class BoardService {
 
     const post = await postService.create(title, content);
     const thread = await threadService.create(post.id);
-    await attachmentService.create(post, attachments);
+    if(attachments)
+      await attachmentService.create(post, attachments);
     thread.headPost = post;
     return thread;
   }
@@ -60,7 +61,8 @@ class BoardService {
 
     const post = await postService.reply(title, content, id);
     const thread = await threadService.update(id, sage);
-    await attachmentService.create(post, attachments);
+    if(attachments)
+      await attachmentService.create(post, attachments);
     return {
       thread,
       post,

@@ -11,11 +11,21 @@ module.exports = function(props) {
             UPLOADCARE_TABS = 'file';
         `}} />
         <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+
+        <link rel="stylesheet" href="css/reset.css" />
+        <link rel="stylesheet" href="css/main.css" />
     </head>
     <body>
-      <Form />
-      <hr />
-      {props.children}
+      <div className='content'>
+        <Form />
+        <div className="top">
+          <a href="/">Главная</a>
+        </div>
+        <hr />
+        {props.children}
+        <hr />
+        <Form />
+      </div>
     </body>
   </html>);
 }
