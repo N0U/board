@@ -1,6 +1,7 @@
 const { decorate } = require('./transaction-decorator.js');
 const { Op } = require("sequelize");
 const Post = require('../models/post.js');
+const { EntityNotFoundError, ReplyToCommentError } = require('./errors.js');
 
 class PostService {
   constructor() {
@@ -8,43 +9,57 @@ class PostService {
     decorate(this, 'reply');
   }
 
-  async reply(threadId, postData) {
+  async reply(title, content, replyToId) {
+    const originalPost = await this.getPost(replyToId);
+    if(originalPost.isComment()) {
+      throw new ReplyToCommentError(replyToId);
+    }
+    return await originalPost.createReply({ title, content });
+  }
+
+  async create(title, content) {
     return await Post.create({
-      title: postData.title,
-      content: postData.content,
-      threadId,
+      title,
+      content,
     });
   }
 
-  async create(postData) {
-    return await Post.create({
-      title: postData.title,
-      content: postData.content,
-    });
+  async getPost(id) {
+    const post = await Post.findByPk(id);
+    if(!post) {
+      throw new EntityNotFoundError(id);
+    }
+    return post;
   }
 
-  async getRepliesPreview(threadId, limit = 3) {
-    const headPost = await Post.findByPk(threadId);
-    const posts = await Post.findAll({
-      where: {
-        threadId,
-        [Op.not]: [
-          { id: threadId, }
-        ],
+  async getThread(id) {
+    const post = await Post.findByPk(id, {
+      include: {
+        model: Post,
+        as: 'replies',
+        order: [[ 'id', 'ASC' ]],
       },
-      order: [[ 'id', 'DESC' ]],
-      limit,
     });
-    return [headPost, ...posts.reverse()];
+    if(!post) {
+      throw new EntityNotFoundError(id);
+    }
+    return post;
   }
 
-  async getReplies(threadId) {
-    return await Post.findAll({
-      where: {
-        threadId,
-      },
-      order: [[ 'id', 'ASC' ]],
+  async getThreadPreview(id, limit = 3) {
+    const post = await Post.findByPk(id, {
+      include: {
+        model: Post,
+        as: 'replies',
+        order: [[ 'id', 'DESC' ]],
+        limit,
+      }
     });
+    if(!post) {
+      throw new EntityNotFoundError(id);
+    }
+    post.replies.reverse();
+    return post;
   }
 }
 

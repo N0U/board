@@ -1,30 +1,35 @@
-const ThreadService = require('./services/thread-service.js');
-const { EntityNotFoundError } = require('./services/errors.js');
+const BoardService = require('./services');
+const { EntityNotFoundError, ReplyToCommentError } = require('./services/errors.js');
 const { app } = require('./dependencies.js');
 
 app.route('/')
   .get(async(req, res) => {
-    const threadService = new ThreadService();
-    const threads = await threadService.list();
+    const boardService = new BoardService();
+    const threads = await boardService.getBoard();
     res.render('index', { threads });
   })
   .post(async (req, res) => {
     const body = req.body;
-    const threadService = new ThreadService();
-    const thread = await threadService.create(body);
-    res.redirect(`/${thread.id}`);
+    console.log(body);
+    const { title, content, attachments } = body;
+    const boardService = new BoardService();
+    const thread = await boardService.createThread(title, content, attachments);
+    res.redirect(`/`);
   });
 
 app.route('/:threadId(\\d+)')
   .get(async (req, res) => {
     try {
       const { threadId } = req.params;
-      const threadService = new ThreadService();
-      const thread = await threadService.get(threadId);
+      const boardService = new BoardService();
+      const thread = await boardService.getThread(threadId);
       res.render('thread', { thread });
     } catch(error) {
       if(error instanceof EntityNotFoundError) {
         res.status(404).render('404');
+      } else {
+        console.error(error);
+        throw error;
       }
     }
   })
@@ -32,12 +37,17 @@ app.route('/:threadId(\\d+)')
     try {
       const { threadId } = req.params;
       const body = req.body;
-      const threadService = new ThreadService();
-      await threadService.reply(threadId, body);
+      console.log(body);
+      const { title, content, sage, attachments } = body;
+      const boardService = new BoardService();
+      await boardService.replyThread(threadId, title, content, sage, attachments);
       res.status(201).redirect(`/${threadId}`);
     } catch(error) {
       if(error instanceof EntityNotFoundError) {
         res.status(404).render('404');
+      } else {
+        console.error(error);
+        throw error;
       }
     }
   });

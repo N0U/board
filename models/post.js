@@ -1,7 +1,13 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const { sequelize } = require('../dependencies.js');
 
-const Post = module.exports = sequelize.define('Post', {
+class Post extends Model {
+  isComment() {
+    return !!this.replayToId;
+  }
+}
+
+Post.init({
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -16,5 +22,15 @@ const Post = module.exports = sequelize.define('Post', {
   sage: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
-  }
+  },
+}, {
+  sequelize,
+  modelName: 'Post',
 });
+
+Post.hasMany(Post, {
+  foreignKey: 'replayToId',
+  as: 'replies',
+});
+
+module.exports = Post;

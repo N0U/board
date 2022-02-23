@@ -1,5 +1,9 @@
+const React = require('react');
 const Layout = require('./layout');
 
-<Layout>
-  <h1>NOT FOUND</h1>
-</Layout>
+module.exports = function(props) {
+  console.log(props);
+  return <Layout>
+    <h1>NOT FOUND</h1>
+  </Layout>;
+}
