@@ -14,7 +14,7 @@ class BoardService {
   }
 
   async getBoard(offset = 0, limit = 10, previewLimit = 3) {
-    const threads = await Thread.findAll({
+    const { count, rows: threads } = await Thread.findAndCountAll({
       order: [[ 'lastBump', 'DESC' ]],
       offset,
       limit,
@@ -38,7 +38,7 @@ class BoardService {
     for(const t of threads) {
       t.headPost.replies.reverse();
     }
-    return threads;
+    return { count, threads };
   }
 
   async createThread(title, content, attachments) {

@@ -1,7 +1,7 @@
 const React = require('react');
 const Form = require('./components/form');
 
-module.exports = function(props) {
+module.exports = function({ children, forms = true }) {
   return (<html>
     <head>
       <meta charSet="UTF-8"/>
@@ -17,14 +17,14 @@ module.exports = function(props) {
     </head>
     <body>
       <div className='content'>
-        <Form />
+        {forms && <Form />}
         <div className="top">
           <a href="/">Главная</a>
         </div>
         <hr />
-        {props.children}
+        {children}
         <hr />
-        <Form />
+        {forms && <Form />}
       </div>
     </body>
   </html>);

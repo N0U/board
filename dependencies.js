@@ -6,6 +6,7 @@ Sequelize.useCLS(sequelizeNamespace);
 
 module.exports.app = express();
 module.exports.sequelize = new Sequelize(process.env.DATABASE_URL, {
+  logging: false,
   dialectOptions: {
     ssl: {
         require: true,
