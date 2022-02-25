@@ -1,3 +1,12 @@
+/* https://colorscheme.ru/#4e31KmRNhw0w0 */
+
+body {
+  background-color:	#FFF99B;
+}
+
+a, a:visited {
+  color: #361A90;
+}
 .content {
 
 }
@@ -7,10 +16,7 @@
 }
 
 .top a {
-}
-
-.top a:visited {
-  color: blue;
+  font-size: 20px;
 }
 
 .form {
@@ -26,7 +32,7 @@
 
 .form-row label {
   margin: 5px 0 5px 0;
-  color: #5c5c5c;
+  color: #474747;
 }
 
 .form-row input {
@@ -61,7 +67,7 @@
 }
 
 .thread-info {
-  color: gray;
+  color: #474747;
   margin: 5px 5px 12px 12px;
 }
 
@@ -76,12 +82,12 @@
 
 .post-container {
   display: inline-block;
-  border: 1px solid gray;
-  border-radius: 2px;
+  border: 2px solid #A67E18;
+  border-radius: 10px;
+  background-color: #FFE39B;
 }
 
 .head-post .post-container {
-  border: 0;
 }
 
 .post-info {
@@ -96,10 +102,6 @@
 .post-info a {
   margin: 0 10px 0 5px;
   font-size: 20px;
-}
-
-.post-info a:visited {
-  color: blue;
 }
 
 .post-title {
