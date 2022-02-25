@@ -5,11 +5,7 @@ const { app } = require('./dependencies.js');
 const engine = require('express-react-views').createEngine({ beautify: !!process.env.DEVELOP });
 
 app.use(express.static('public'));
-app.use(express.urlencoded({ extended: true })) ;
-
-app.set('views', 'views');
-app.set('view engine', 'jsx');
-app.engine('jsx', engine);
+app.use(express.json());
 
 require('./models');
 require('./controller.js');
@@ -20,4 +16,4 @@ app.listen(process.env.PORT || 3000, () => {
 
 process.on('uncaughtException', function (err) {
     console.log(err);
-}); 
+});

@@ -7,11 +7,11 @@ const PAGE_SIZE = 10;
 
 const boardService = new BoardService();
 
-app.route('/')
+app.route('/api/board')
   .get(async(req, res) => {
     const { page = 0 } = req.query;
     const { count, threads } = await boardService.getBoard(page*PAGE_SIZE, PAGE_SIZE);
-    res.render('index', { page, pageCount: Math.ceil(count/PAGE_SIZE), threads });
+    return res.status(200).json({ page, pageCount: Math.ceil(count/PAGE_SIZE), threads });
   })
   .post(
     body('title').trim(),
@@ -20,28 +20,25 @@ app.route('/')
     async (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).render(
-          'error',
-          { errors: errors.errors.map(e => e.param) },
-        );
+        return res.status(400).json({ errors: errors.errors });
       }
 
       const body = req.body;
       const { title, content, attachments } = body;
       const thread = await boardService.createThread(title, content, attachments);
-      return res.redirect(`/`);
+      return res.status(201).json(thread);
     }
   );
 
-app.route('/:threadId(\\d+)')
+app.route('/api/board/:threadId(\\d+)')
   .get(async (req, res) => {
     try {
       const { threadId } = req.params;
       const thread = await boardService.getThread(threadId);
-      res.render('thread', { thread });
+      return res.status(200).json(thread);
     } catch(error) {
       if(error instanceof EntityNotFoundError) {
-        res.status(404).render('404');
+        return res.status(404).json({ error: 'not found' });
       } else {
         console.error(error);
         throw error;
@@ -54,25 +51,21 @@ app.route('/:threadId(\\d+)')
       body('content').trim().notEmpty(),
       body('attachments').trim().isURL(),
     ]),
-
     async (req, res) => {
       try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-          return res.status(400).render(
-            'error',
-            { errors: errors.errors.map(e => e.param) },
-          );
+          return res.status(400).json({ errors: errors.errors });
         }
 
         const { threadId } = req.params;
         const body = req.body;
         const { title, content, sage, attachments } = body;
-        await boardService.replyThread(threadId, title, content, sage, attachments);
-        res.status(201).redirect(`/${threadId}`);
+        const result = await boardService.replyThread(threadId, title, content, sage, attachments);
+        return res.status(201).json(result);
       } catch(error) {
         if(error instanceof EntityNotFoundError) {
-          res.status(404).render('404');
+          return res.status(404).json({ error: 'not found' });
         } else {
           console.error(error);
           throw error;
@@ -82,5 +75,5 @@ app.route('/:threadId(\\d+)')
   );
 
 app.all('*', function(req, res){
-  res.status(404).render('404');
+  return res.status(404).json({ error: 'not found' });
 });
