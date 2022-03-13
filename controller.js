@@ -73,5 +73,5 @@ app.route('/api/board/:threadId(\\d+)')
   );
 
 app.all('*', function(req, res){
-  return res.status(404).json({ error: 'not found' });
+  return res.sendFile('public/index.html', {root: __dirname});
 });
