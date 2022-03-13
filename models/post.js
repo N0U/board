@@ -14,7 +14,7 @@ Post.init({
     primaryKey: true
   },
   title: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(100),
   },
   content: {
     type: DataTypes.STRING(2000),

@@ -14,17 +14,15 @@ app.route('/api/board')
     return res.status(200).json({ page, pageCount: Math.ceil(count/PAGE_SIZE), threads });
   })
   .post(
-    body('title').trim(),
-    body('content').trim(),
-    body('attachments').trim().isURL(),
+    body('title').trim().isLength({ max: 100 }),
+    body('content').trim().isLength({ max: 2000 }),
+    body('attachments').isArray({ min: 1 }),
     async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.errors });
+      const validation = validationResult(req);
+      if (!validation.isEmpty()) {
+        return res.status(400).json({ errors: validation.errors });
       }
-
-      const body = req.body;
-      const { title, content, attachments } = body;
+      const { title, content, attachments } = req.body;;
       const thread = await boardService.createThread(title, content, attachments);
       return res.status(201).json(thread);
     }
@@ -46,21 +44,21 @@ app.route('/api/board/:threadId(\\d+)')
     }
   })
   .post(
-    body('title').trim(),
+    body('title').trim().isLength({ max: 100 }),
+    body('content').trim().isLength({ max: 2000 }),
     oneOf([
       body('content').trim().notEmpty(),
-      body('attachments').trim().isURL(),
+      body('attachments').isArray({ min: 1 }),
     ]),
     async (req, res) => {
       try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          return res.status(400).json({ errors: errors.errors });
+        const validation = validationResult(req);
+        if (!validation.isEmpty()) {
+          return res.status(400).json({ errors: validation.errors });
         }
 
         const { threadId } = req.params;
-        const body = req.body;
-        const { title, content, sage, attachments } = body;
+        const { title, content, sage, attachments } = req.body;
         const result = await boardService.replyThread(threadId, title, content, sage, attachments);
         return res.status(201).json(result);
       } catch(error) {

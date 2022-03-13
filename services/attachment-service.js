@@ -1,63 +1,57 @@
 const axios = require('axios');
 const { decorate } = require('./transaction-decorator.js');
+const Uploadcare = require('./uploadcare.js');
+const CheckVideo = require('./video-checker.js');
 const Attachment = require('../models/attachment.js');
 
-const PUBLIC_KEY = process.env.UPLOADCARE_PUBLIC_KEY;
-const UPLOADCARE_TIMEOUT = 0;
-const PREVIEW_SIZE = '200x200';
-
-const publicApi = axios.create({
-  baseURL: 'https://upload.uploadcare.com',
-  timeout: UPLOADCARE_TIMEOUT,
-  proxy: false,
-});
-
-const privateApi = axios.create({
-  baseURL: 'https://api.uploadcare.com',
-  timeout: UPLOADCARE_TIMEOUT,
-  proxy: false,
-  headers: {
-    'Authorization': `Uploadcare.Simple ${PUBLIC_KEY}:${process.env.UPLOADCARE_SECRET_KEY}`,
-  },
-});
-
-async function getGroupInfo(uuid) {
-  const resp = await publicApi.get('/group/info', {
-    params: {
-      pub_key: PUBLIC_KEY,
-      group_id: uuid,
-    },
-  });
-  return resp.data;
-}
-
-async function storeGroup(uuid) {
-    await privateApi.put(`groups/${uuid}/storage/`);
-}
+const PREVIEW_SIZE = 300;
 
 class AttachmentService {
   constructor() {
     decorate(this, 'create');
   }
 
-  async getGroupInfo() {
-
+  async createImages(post, groupUrl) {
+    const groupUuid = Uploadcare.getGroupUuid(groupUrl);
+    const info = await Uploadcare.getGroupInfo(groupUuid);
+    const attachments = [];
+    for(const f of info.files) {
+      const { uuid } = f;
+      attachments.push(await post.createAttachment({
+        fileId: uuid,
+        type: 'image',
+        ...Uploadcare.createImageUrl(uuid, PREVIEW_SIZE),
+      }));
+    }
+    return { attachments, groupUuid };
   }
-  async create(post, attachmentUrl) {
+
+  async createVideo(post, type, url) {
+    return await post.createAttachment({
+      type: type,
+      fullUrl: url,
+    });
+  }
+
+  async create(post, attachments) {
     try {
-      const groupUuid = attachmentUrl.match(/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}~\d+/)[0];
-      const info = await getGroupInfo(groupUuid);
-      const attachments = [];
-      for(const f of info.files) {
-        const { uuid } = f;
-        attachments.push(await post.createAttachment({
-          fileId: uuid,
-          fullUrl: `https://ucarecdn.com/${uuid}/`,
-          thumbnailUrl: `https://ucarecdn.com/${uuid}/-/preview/${PREVIEW_SIZE}/`,
-        }));
+      let attachedResources = [];
+      let groupUuid;
+      for(const { url, type } of attachments) {
+        if(type === 'images') {
+          const images = await this.createImages(post, url);
+          attachedResources = [...attachedResources, ...images.attachments];
+          groupUuid = images.groupUuid;
+        } else {
+          const video = await this.createVideo(post, type, url);
+          attachedResources.push(video);
+        }
       }
-      await storeGroup(groupUuid);
-      return attachments;
+
+      if(groupUuid) {
+        await Uploadcare.storeGroup(groupUuid);
+      }
+      return attachedResources;
     } catch(error) {
       console.log(error);
       throw error;

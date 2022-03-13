@@ -35,8 +35,9 @@ class BoardService {
         ],
       }
     });
+    // WTF THIS SHIT WONT WORK AAAAAAAAAAARGH
     for(const t of threads) {
-      t.headPost.replies.reverse();
+      t.headPost.replies = t.headPost.replies.sort((a, b) => a.id < b.id);
     }
     return { count, threads };
   }
@@ -59,7 +60,7 @@ class BoardService {
     const threadService = new ThreadService();
     const postService = new PostService();
 
-    const post = await postService.reply(title, content, id);
+    const post = await postService.reply(title, content, sage, id);
     const thread = await threadService.update(id, sage);
     if(attachments)
       await attachmentService.create(post, attachments);

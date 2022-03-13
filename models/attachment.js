@@ -7,13 +7,16 @@ module.exports = sequelize.define('Attachment', {
     autoIncrement: true,
     primaryKey: true
   },
+  type: {
+    type: DataTypes.ENUM,
+    values: ['image', 'youtube', 'tiktok'],
+    defaultValue: 'image',
+  },
   fileId: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   thumbnailUrl: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   fullUrl: {
     type: DataTypes.STRING,

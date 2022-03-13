@@ -9,12 +9,12 @@ class PostService {
     decorate(this, 'reply');
   }
 
-  async reply(title, content, replyToId) {
+  async reply(title, content, sage, replyToId) {
     const originalPost = await this.getPost(replyToId);
     if(originalPost.isComment()) {
       throw new ReplyToCommentError(replyToId);
     }
-    return await originalPost.createReply({ title, content });
+    return await originalPost.createReply({ title, content, sage });
   }
 
   async create(title, content) {
